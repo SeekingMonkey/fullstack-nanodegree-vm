@@ -22,10 +22,11 @@ def GetAllPosts():
       pointing to the post content, and 'time' key pointing to the time
       it was posted.
     '''
-    c.execute("""SELECT content, time, id FROM posts ORDER BY time DESC""")
-    
+    c.execute("""SELECT * FROM posts ORDER BY time DESC""")
+    DB = c.fetchall()
+    print(DB)
     posts = [{'content': str(row[1]), 'time': str(row[0])} for row in DB]
-    posts.sort(key=lambda row: row['time'], reverse=True)
+    #posts.sort(key=lambda row: row['time'], reverse=True)
     return posts
 
 ## Add a post to the database.
@@ -35,6 +36,11 @@ def AddPost(content):
     Args:
       content: The text content of the new post.
     '''
-    c.execute("""INSERT INTO posts VALUES ('%s')""") #% (content)
+    #print(content)
+    #text = str(content)
+    text = "It works!!!"
+    print "content is: %s" % content
+    c.execute("""INSERT INTO posts(content) VALUES ('%s');""" % content)
+    
     #t = time.strftime('%c', time.localtime())
     #DB.append((t, content))
