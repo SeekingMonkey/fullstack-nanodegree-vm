@@ -4,13 +4,7 @@
 
 import time, psycopg2
 
-## Database connection
-DB = []
-try:
-    conn = psycopg2.connect("dbname=forum")
-except:
-    print "I am unable to connect to the database"
-c = conn.cursor()
+
 
 
 ## Get posts from database.
@@ -22,25 +16,34 @@ def GetAllPosts():
       pointing to the post content, and 'time' key pointing to the time
       it was posted.
     '''
+    ## Database connection
+    try:
+        DB = psycopg2.connect("dbname=forum")
+    except:
+        print "I am unable to connect to the database"
+    c = DB.cursor()
+    c.execute("""UPDATE posts SET content = 'Cheese!' WHERE content LIKE '%spam%'""")
+    DB.commit()
     c.execute("""SELECT * FROM posts ORDER BY time DESC""")
-    DB = c.fetchall()
-    print(DB)
-    posts = [{'content': str(row[1]), 'time': str(row[0])} for row in DB]
-    #posts.sort(key=lambda row: row['time'], reverse=True)
+    DBdata = c.fetchall()
+    posts = [{'content': str(row[1]), 'time': str(row[0])} for row in DBdata]
+    DB.close()
     return posts
 
 ## Add a post to the database.
-def AddPost(content):
+def AddPost(post):
     '''Add a new post to the database.
 
     Args:
       content: The text content of the new post.
     '''
-    #print(content)
-    #text = str(content)
-    text = "It works!!!"
-    print "content is: %s" % content
-    c.execute("""INSERT INTO posts(content) VALUES ('%s');""" % content)
-    
-    #t = time.strftime('%c', time.localtime())
-    #DB.append((t, content))
+    try:
+        DB = psycopg2.connect("dbname=forum")
+    except:
+        print "I am unable to connect to the database"
+    c = DB.cursor()
+    print "content is: %s" % post
+    c.execute("INSERT INTO posts(content) VALUES (%s)", (post,))
+    DB.commit()
+    DB.close()
+
