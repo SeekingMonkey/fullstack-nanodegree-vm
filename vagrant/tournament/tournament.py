@@ -121,5 +121,31 @@ def swissPairings():
         id2: the second player's unique id
         name2: the second player's name
     """
+    db = connect()
+    c = db.cursor()
+    c.execute("""SELECT tournaments.playerid, players.playername FROM players RIGHT JOIN tournaments
+                ON players.playerid = tournaments.playerid
+                ORDER BY tournaments.wins DESC""")
+    dbData = c.fetchall()
+    players = []
+    #print dbData
+    #for row in dbData:
+    #    print row[0]
+    for i in range(1,(len(dbData)/2)+1):
+     #   print "....loop ", i
+     #   print dbData[i*2-2][0]
+     #   print dbData[i*2-1][0]
+        players.append((dbData[i*2-2][0], dbData[i*2-2][1], dbData[i*2-1][0], dbData[i*2-2][1]))
+    #print players
+    return players
+
+"""
+[
+ ('("Twilight Sparkle",1)',),
+ ('(Applejack,1)',),
+ ('(Fluttershy,0)',),
+ ('("Pinkie Pie",0)',)
+]
+"""
 
 
