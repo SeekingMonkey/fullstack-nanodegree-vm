@@ -22,7 +22,9 @@ def GetAllPosts():
     except:
         print "I am unable to connect to the database"
     c = DB.cursor()
-    c.execute("""UPDATE posts SET content = 'Cheese!' WHERE content LIKE '%spam%'""")
+    c.execute("""DELETE FROM table WHERE content LIKE '%spam%'""")
+    DB.commit()
+    c.execute("""DELETE FROM table WHERE content LIKE '%cheese%'""")
     DB.commit()
     c.execute("""SELECT * FROM posts ORDER BY time DESC""")
     DBdata = c.fetchall()

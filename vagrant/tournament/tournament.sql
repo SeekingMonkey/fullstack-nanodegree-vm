@@ -5,5 +5,29 @@
 --
 -- You can write comments in this file by starting them with two dashes, like
 -- these lines here.
+--
+--Players
+--PlayerId serial primary key | PlayerName text | TournamentId int
+--
+--Tournament
+--TournamentId int | PlayerId int | Wins int | Draws int | Losses int | Round int
+
+CREATE TABLE players
+(
+PlayerId serial primary key,
+PlayerName text
+);
+
+CREATE TABLE tournaments
+(
+TournamentId serial primary key,
+PlayerId integer references Players(PlayerId),
+Wins integer,
+Losses integer,
+Draws integer,
+Matches integer
+);
+
+
 
 

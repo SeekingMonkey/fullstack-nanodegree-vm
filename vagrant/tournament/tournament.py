@@ -5,23 +5,42 @@
 
 import psycopg2
 
-
 def connect():
     """Connect to the PostgreSQL database.  Returns a database connection."""
-    return psycopg2.connect("dbname=tournament")
+    try:
+        return psycopg2.connect("dbname=tournament")
+    except:
+        print "I am unable to connect to the database"
 
 
 def deleteMatches():
     """Remove all the match records from the database."""
+    db = connect()
+    c = db.cursor()
+    c.execute("DELETE FROM tournaments")
+    db.commit()
+    db.close()
 
 
 def deletePlayers():
     """Remove all the player records from the database."""
-
+    db = connect()
+    c = db.cursor()
+    c.execute("DELETE FROM tournaments")
+    c.execute("DELETE FROM players")
+    db.commit()
+    db.close()
 
 def countPlayers():
     """Returns the number of players currently registered."""
-
+    db = connect()
+    c = db.cursor()
+    c.execute("SELECT COUNT(*) FROM players;")
+    data = c.fetchall()
+    db.close()
+    #print "data= ",data[0][0]
+    count = data[0][0]
+    return count
 
 def registerPlayer(name):
     """Adds a player to the tournament database.
@@ -32,7 +51,14 @@ def registerPlayer(name):
     Args:
       name: the player's full name (need not be unique).
     """
-
+    db = connect()
+    c = db.cursor()
+    c.execute("INSERT INTO players(PlayerName) VALUES (%s)", (name,))
+    db.commit()
+    c.execute("""INSERT INTO tournaments
+              VALUES (default, (SELECT playerid FROM players WHERE playername = %s), 0, 0, 0, 0)""", (name,))
+    db.commit()
+    db.close()
 
 def playerStandings():
     """Returns a list of the players and their win records, sorted by wins.
@@ -47,7 +73,19 @@ def playerStandings():
         wins: the number of matches the player has won
         matches: the number of matches the player has played
     """
-
+    db = connect()
+    c = db.cursor()
+    c.execute("""SELECT players.playerid, playername, wins, matches
+              FROM players left join tournaments
+              on players.playerid = tournaments.playerid""")
+    dbData = c.fetchall()
+    #print "dbData= ", dbData
+    #print [{'matches': row[3], 'wins': row[2], 'name': str(row[1]), 'id': row[0]} for row in dbData]
+    #print [{'id': row[0], 'name': str(row[1]), 'wins': row[2], 'matches': row[3]} for row in dbData]
+    #print [(row[0], str(row[1]), row[2], row[3]) for row in dbData]
+    players = [{'matches': row[3], 'wins': row[2], 'name': str(row[1]), 'id': row[0]} for row in dbData]
+    db.close()
+    return dbData
 
 def reportMatch(winner, loser):
     """Records the outcome of a single match between two players.
@@ -56,7 +94,17 @@ def reportMatch(winner, loser):
       winner:  the id number of the player who won
       loser:  the id number of the player who lost
     """
- 
+    #print "winner: ",winner,"loser: ", loser
+    db = connect()
+    c = db.cursor()
+    c.execute("""UPDATE tournaments
+                SET wins=wins+1, matches=matches+1
+                WHERE playerid = %s""", (winner,))
+    c.execute("""UPDATE tournaments
+                SET losses=losses+1, matches=matches+1
+                WHERE playerid = %s""", (loser,))   
+    db.commit()
+    db.close()
  
 def swissPairings():
     """Returns a list of pairs of players for the next round of a match.
