@@ -21,7 +21,8 @@ PlayerName text
 CREATE TABLE tournaments
 (
 TournamentId serial primary key,
-PlayerId integer references Players(PlayerId),
+PlayerId integer references players(PlayerId),
+PlayerName integer references players(PlayerName),
 Wins integer,
 Losses integer,
 Draws integer,

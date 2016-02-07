@@ -138,14 +138,3 @@ def swissPairings():
         players.append((dbData[i*2-2][0], dbData[i*2-2][1], dbData[i*2-1][0], dbData[i*2-2][1]))
     #print players
     return players
-
-"""
-[
- ('("Twilight Sparkle",1)',),
- ('(Applejack,1)',),
- ('(Fluttershy,0)',),
- ('("Pinkie Pie",0)',)
-]
-"""
-
-
