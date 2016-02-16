@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
 #create an instance of Flask with name of this application as the argument
 app = Flask(__name__)
 
@@ -12,6 +12,19 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
+#Making an API endpoint for a GET request for all menuitems for a restaurant
+@app.route('/restaurants/<int:restaurant_id>/menu/JSON')
+def restaurantMenuJSON(restaurant_id):
+	restaurant = session.query(Restaurant).filter_by(id = restaurant_id).one()
+	items = session.query(MenuItem).filter_by(restaurant_id = restaurant_id).all()
+	return jsonify(MenuItems=[i.serialize for i in items])
+	
+#Making an API endpoint for a GET request for a menu item
+@app.route('/restaurants/<int:restaurant_id>/menu/<int:menu_id>/JSON')
+def restaurantItemJSON(restaurant_id, menu_id):
+	item = session.query(MenuItem).filter_by(id = menu_id).one()
+	return jsonify(MenuItems=[item.serialize])
+	
 @app.route('/')
 @app.route('/restaurants/')
 def displayRestaurants():

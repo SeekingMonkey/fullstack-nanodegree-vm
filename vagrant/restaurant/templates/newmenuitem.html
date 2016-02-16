@@ -1,18 +1,20 @@
 <html>
+<head>
+	<link rel=stylesheet type=text/css href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
 <body>
-
-<h1>New Menu Item</h1>
-	
-<form action="{{ url_for('newMenuItem', restaurant_id=restaurant_id) }}" method='post'>
-
-	<p>Name:</p>
-		<input type ='text' size='30' name='name' value='Wild Turkeys'></br>
-		<input type ='text' size='130' name='description'value='Wild fucking turkeys!'></br>
-		<input type ='text' size='30' name='price' value='$9,9999.99'></br>
+	<h1>New Menu Item</h1>
 		
-	<input type='submit' value='Create'>
+	<form action="{{ url_for('newMenuItem', restaurant_id=restaurant_id) }}" method='post'>
 
-</form>
+		<p>Name:</p>
+			<input type ='text' size='30' name='name' value='Wild Turkeys'></br>
+			<input type ='text' size='130' name='description'value='Wild fucking turkeys!'></br>
+			<input type ='text' size='30' name='price' value='$9,9999.99'></br>
+			
+		<input type='submit' value='Create'>
 
+	</form>
 </body>
 </html>
